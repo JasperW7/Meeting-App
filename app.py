@@ -7,7 +7,7 @@ import traceback
 import tempfile
 import openai as gpt
 
-aai.settings.api_key = os.environ.get("ASSEMBLYAI_API_KEY")
+aai.settings.api_key = "aa6858980b8a4fda9103de2e70acc2cd"
 app = Flask(__name__)
 CORS(app)
 @app.route("/")

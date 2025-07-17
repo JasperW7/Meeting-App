@@ -35,7 +35,7 @@ def transcribe():
 
         transcriber = aai.Transcriber()
         config = aai.TranscriptionConfig(summarization=True)
-        transcript = transcriber.transcribe(wav_path)
+        transcript = transcriber.transcribe(wav_path, config=config)
         summary = transcript.summary
 
         os.remove(raw_path)
@@ -72,7 +72,7 @@ def upload():
 
             transcriber = aai.Transcriber()
             config = aai.TranscriptionConfig(summarization=True)
-            transcript = transcriber.transcribe(mp3_path)
+            transcript = transcriber.transcribe(mp3_path, config=config)
             summary = transcript.summary
             # summary = gpt_summary(transcript.text)
 

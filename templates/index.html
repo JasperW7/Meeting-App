@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Meeting Notes - Live Recording</title>
+</head>
+<body>
+  <h1>Meeting Notes</h1>
+  <button id="start-recording">Start Recording</button>
+  <button id="stop-recording" disabled>Stop Recording</button>
+  <div id="transcript">🎤 Waiting to record...</div>
+
+  <script>
+    let mediaRecorder;
+    let audioChunks = [];
+
+    const startBtn = document.getElementById("start-recording");
+    const stopBtn = document.getElementById("stop-recording");
+    const transcriptDiv = document.getElementById("transcript");
+
+    startBtn.addEventListener("click", async () => {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream);
+      audioChunks = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunks.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstart = () => {
+        transcriptDiv.innerHTML = "🔴 Recording...";
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+      };
+
+      mediaRecorder.onstop = () => {
+        transcriptDiv.innerHTML = "⏹️ Recording stopped. Processing...";
+
+        const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const formData = new FormData();
+        formData.append("audio", audioBlob, "recording.webm");
+
+        const audio = new Audio(audioUrl);
+        audio.controls = true;
+        transcriptDiv.innerHTML = "<strong>Recording:</strong><br/>";
+        transcriptDiv.appendChild(audio);
+
+        fetch("/transcribe/", {
+          method: "POST",
+          body: formData,
+        })
+          .then(async response => {
+            const text = await response.text();
+            if (!response.ok) throw new Error("Server error: " + response.status + " – " + text);
+            return JSON.parse(text);
+          })
+          .then(data => {
+            transcriptDiv.innerHTML += `<p>Transcription: ${data.text}</p>`;
+            transcriptDiv.innerHTML += `<p>Summary: ${data.summary}</p>`;
+          })
+          .catch(error => {
+            console.error("Error during transcription:", error);
+            transcriptDiv.innerHTML += `<p>Error: ${error.message}</p>`;
+          });
+
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+      };
+
+      mediaRecorder.start();
+    });
+
+    stopBtn.addEventListener("click", () => {
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+      }
+    });
+  </script>
+</body>
+</html>

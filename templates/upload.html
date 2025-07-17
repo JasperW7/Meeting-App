@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Upload Video Notes</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Upload Notes - Note App{% endblock %}
+
+{% block content %}
   <h1>Upload MP4 or MP3 for Transcription</h1>
   <input type="file" id="video-upload" accept="video/mp4,audio/mp3" />
   <button id="upload-btn">Upload & Transcribe</button>
@@ -32,22 +29,21 @@
         method: "POST",
         body: formData,
       })
-        .then(async response => {
-          const text = await response.text();
-          if (!response.ok) throw new Error("Server error: " + response.status + " – " + text);
-          return JSON.parse(text);
-        })
-        .then(data => {
-          resultDiv.innerHTML = `
-            <p><strong>Transcription:</strong> ${data.text}</p>
-            <p><strong>Summary:</strong> ${data.summary}</p>
-          `;
-        })
-        .catch(error => {
-          console.error("Error during upload/transcription:", error);
-          resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
-        });
+      .then(async response => {
+        const text = await response.text();
+        if (!response.ok) throw new Error("Server error: " + response.status + " – " + text);
+        return JSON.parse(text);
+      })
+      .then(data => {
+        resultDiv.innerHTML = `
+          <p><strong>Transcription:</strong> ${data.text}</p>
+          <p><strong>Summary:</strong> ${data.summary}</p>
+        `;
+      })
+      .catch(error => {
+        console.error("Error during upload/transcription:", error);
+        resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
+      });
     });
   </script>
-</body>
-</html>
+{% endblock %}

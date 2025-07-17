@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Meeting Notes - Live Recording</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Live Recording - Note App{% endblock %}
+
+{% block content %}
   <h1>Meeting Notes</h1>
   <button id="start-recording">Start Recording</button>
   <button id="stop-recording" disabled>Stop Recording</button>
@@ -53,19 +50,19 @@
           method: "POST",
           body: formData,
         })
-          .then(async response => {
-            const text = await response.text();
-            if (!response.ok) throw new Error("Server error: " + response.status + " – " + text);
-            return JSON.parse(text);
-          })
-          .then(data => {
-            transcriptDiv.innerHTML += `<p>Transcription: ${data.text}</p>`;
-            transcriptDiv.innerHTML += `<p>Summary: ${data.summary}</p>`;
-          })
-          .catch(error => {
-            console.error("Error during transcription:", error);
-            transcriptDiv.innerHTML += `<p>Error: ${error.message}</p>`;
-          });
+        .then(async response => {
+          const text = await response.text();
+          if (!response.ok) throw new Error("Server error: " + response.status + " – " + text);
+          return JSON.parse(text);
+        })
+        .then(data => {
+          transcriptDiv.innerHTML += `<p>Transcription: ${data.text}</p>`;
+          transcriptDiv.innerHTML += `<p>Summary: ${data.summary}</p>`;
+        })
+        .catch(error => {
+          console.error("Error during transcription:", error);
+          transcriptDiv.innerHTML += `<p>Error: ${error.message}</p>`;
+        });
 
         startBtn.disabled = false;
         stopBtn.disabled = true;
@@ -80,5 +77,4 @@
       }
     });
   </script>
-</body>
-</html>
+{% endblock %}

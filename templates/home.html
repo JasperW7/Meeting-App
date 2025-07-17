@@ -1,14 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Note App Home</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Home - Note App{% endblock %}
+
+{% block content %}
   <h1>Welcome to the Note App</h1>
-  <p>Select how you want to take notes:</p>
-  <button onclick="location.href='/record'">🎤 Live Recording</button>
-  <button onclick="location.href='/upload'">📁 Upload MP3/MP4</button>
-</body>
-</html>
+  <p>Select how you want to take notes using the side panel.</p>
+{% endblock %}

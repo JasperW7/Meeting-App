@@ -3,61 +3,45 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>{% block title %}App{% endblock %}</title>
+  <title>{% block title %}Note App{% endblock %}</title>
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
+    }
+
+    .container {
       display: flex;
       height: 100vh;
     }
 
     .sidebar {
       width: 220px;
-      min-width: 220px;
-      max-width: 220px;
       background-color: #8c02a7ff;
       color: black;
       padding: 1rem;
       display: flex;
       flex-direction: column;
-      transition: width 0.3s;
-      overflow: hidden;
+      transition: width 0.3s ease;
     }
 
     .sidebar.collapsed {
       width: 60px;
-      min-width: 60px;
-      max-width: 60px;
-      padding: 1rem 0.5rem;
     }
 
     .sidebar h2,
     .sidebar .dropdown-btn,
     .sidebar .dropdown-container a {
-      transition: opacity 0.3s;
-      white-space: nowrap;
+      transition: opacity 0.3s ease;
     }
 
     .sidebar.collapsed h2,
-    .sidebar.collapsed .dropdown-btn span,
+    .sidebar.collapsed .dropdown-btn,
     .sidebar.collapsed .dropdown-container a {
       opacity: 0;
       pointer-events: none;
-    }
-
-    .sidebar.collapsed .arrow {
-      display: none;
-    }
-
-    .toggle-sidebar {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 1.2rem;
-      cursor: pointer;
-      margin-bottom: 1rem;
-      align-self: flex-end;
+      height: 0;
+      overflow: hidden;
     }
 
     .dropdown-btn {
@@ -78,6 +62,10 @@
       display: none;
       flex-direction: column;
       padding-left: 1rem;
+    }
+
+    .dropdown-container.show {
+      display: flex;
     }
 
     .dropdown-container a {
@@ -104,44 +92,65 @@
       padding: 2rem;
       overflow-x: auto;
       min-width: 0;
-      transition: margin-left 0.3s;
     }
 
     textarea {
       max-width: 100%;
       box-sizing: border-box;
     }
+
+    .toggle-sidebar-btn {
+      margin-top: auto;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
   </style>
 </head>
 <body>
-  <div class="sidebar" id="sidebar">
-    <button class="toggle-sidebar" onclick="toggleSidebar()">☰</button>
-    <h2><a href="{{ url_for('home') }}" style="color:white; text-decoration:none;">App</a></h2>
-    <button class="dropdown-btn" onclick="toggleDropdown()">
-      📝 Notes <span id="arrow" class="arrow">▶</span>
-    </button>
-    <div id="dropdown" class="dropdown-container">
-      <a href="{{ url_for('record') }}">🎤 Live Recording</a>
-      <a href="{{ url_for('upload_page') }}">📁 Upload MP3/MP4</a>
-    </div>
-  </div>
+  <div class="container">
+    <div id="sidebar" class="sidebar">
+      <h2><a href="{{ url_for('home') }}">App</a></h2>
 
-  <div class="main" id="main">
-    {% block content %}{% endblock %}
+      <button class="dropdown-btn" onclick="toggleDropdown()">
+        📝 Notes <span id="arrow" class="arrow">▶</span>
+      </button>
+
+      <div id="dropdown" class="dropdown-container">
+        <a href="{{ url_for('record') }}">🎤 Live Recording</a>
+        <a href="{{ url_for('upload_page') }}">📁 Upload MP3/MP4</a>
+      </div>
+
+      <button class="toggle-sidebar-btn" onclick="toggleSidebar()">⇔</button>
+    </div>
+
+    <div class="main">
+      {% block content %}{% endblock %}
+    </div>
   </div>
 
   <script>
     function toggleDropdown() {
-      const dropdown = document.getElementById('dropdown');
-      const arrow = document.getElementById('arrow');
-      const visible = dropdown.style.display === 'flex';
-      dropdown.style.display = visible ? 'none' : 'flex';
-      arrow.classList.toggle('rotate', !visible);
+      const dropdown = document.getElementById("dropdown");
+      const arrow = document.getElementById("arrow");
+      const isOpen = dropdown.classList.toggle("show");
+      arrow.classList.toggle("rotate", isOpen);
     }
 
     function toggleSidebar() {
-      const sidebar = document.getElementById('sidebar');
-      sidebar.classList.toggle('collapsed');
+      const sidebar = document.getElementById("sidebar");
+      const dropdown = document.getElementById("dropdown");
+      const arrow = document.getElementById("arrow");
+
+      const isCollapsed = sidebar.classList.toggle("collapsed");
+
+      // Reset dropdown if collapsing
+      if (isCollapsed) {
+        dropdown.classList.remove("show");
+        arrow.classList.remove("rotate");
+      }
     }
   </script>
 </body>

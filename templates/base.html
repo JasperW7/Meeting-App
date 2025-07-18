@@ -7,14 +7,19 @@
   <style>
     body { margin: 0; font-family: Arial, sans-serif; display: flex; height: 100vh; }
     .sidebar {
-      width: 15vw;
+      width: 220px;
+      min-width: 220px;
+      max-width: 220px;
       background-color: #8c02a7ff;
       color: black;
       padding: 1rem;
       display: flex;
+      flex-shrink:0;
       flex-direction: column;
     }
-    .sidebar h2 { margin-bottom: 1.5rem; }
+    .sidebar h2 { 
+        margin-bottom: 1.5rem; 
+    }
     .dropdown-btn {
       background: none;
       border: none;
@@ -35,10 +40,26 @@
       text-decoration: none;
       padding: 0.5rem 0;
     }
-    .dropdown-container a:hover { text-decoration: underline; }
-    .arrow { float: right; transition: transform 0.2s; }
-    .rotate { transform: rotate(90deg); }
-    .main { flex-grow: 1; padding: 2rem; }
+    .dropdown-container a:hover { 
+        text-decoration: underline; 
+    }
+    .arrow { 
+        float: right; 
+        transition: transform 0.2s; 
+    }
+    .rotate { 
+        transform: rotate(90deg); 
+    }
+    .main { 
+        flex-grow: 1; 
+        padding: 2rem; 
+        overflow-x:auto;
+        min-width:0;
+    }
+    textarea {
+        max-width:100%;
+        box-sizing: border-box;
+    }
   </style>
 </head>
 <body>

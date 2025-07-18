@@ -34,6 +34,7 @@
         if (!response.ok) throw new Error("Server error: " + response.status + " – " + text);
         return JSON.parse(text);
       })
+      
       .then(data => {
         resultDiv.innerHTML = `
           <p><strong>Transcription:</strong> ${data.text}</p>
